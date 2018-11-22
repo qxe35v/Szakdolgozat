@@ -4,7 +4,8 @@
 #include<stdlib.h>
 #include<errno.h>
 
-#include "test3.h"
+//#include "test3.h"
+#include "szakdoga.h"
 #include "hashtable.h"
 
 

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "test3.h"
+//#include "test3.h"
+#include "szakdoga.h"
 #include "iconv_him.h"
 #include "hashtable.h"
 
@@ -82,8 +83,8 @@ int main() {
     char *fromcode_realname = (char*) malloc(sizeof(char[10]));
 
     hashtable *aliases=aliases_hashbtable();
-    //hashtable* aliases = hashtable_init(256, sizeof(char**), sizeof(char**));
-    //feltolt(aliases);
+    ///hashtable* aliases = hashtable_init(256, sizeof(char**), sizeof(char**));
+    ///feltolt(aliases);
 
     printf("\n%i\n",aliases->usage);
     printf("%p %p %i\n",fromcode,&fromcode,*fromcode);
@@ -195,7 +196,7 @@ int main() {
         printf("error %i %i\n",errno,(int)test2);
 
     ///iconv test
-    printf("\n----------iconv--------\n");
+    /*printf("\n----------iconv--------\n");
     char* inbuf="the quick brown fox jumps over the lazy dog";
     //..........0.........01........01........01.......01..4
     size_t inbytesleft=strlen(inbuf)+1;
@@ -203,7 +204,7 @@ int main() {
     char* outbuf2=outbuf;
     size_t outbytesleft=sizeof(char[44]);
     iconv(test2,&inbuf,&inbytesleft,&outbuf,&outbytesleft);
-    printf("%s\n",outbuf2);
+    printf("%s\n",outbuf2);*/
 
     /*
     //char* p="aaab";
@@ -218,10 +219,36 @@ int main() {
         printf("%c",b);
     }*/
 
-    printf("\n----------finish--------\n");
-    iconv_close(test2);
+    //iconv_test();
 
-    iconv_test();
+
+    printf("\n----------iso88592--------\n");
+    const char *source = "iso88592";
+    const char *target = "ascii";
+    iconv_t cd = iconv_open(target,source);
+
+    if(cd!=-1){
+        FILE *file_in=fopen("from.txt","r");
+        FILE *file_ou=fopen("to.txt","w");
+        char *inbuf=(char*) malloc(sizeof(char[100]));
+        char *inbuf2=inbuf;
+        char *outbuf=(char*) malloc(sizeof(char[100]));
+        char *outbuf2=outbuf;
+        if(file_ou==NULL) printf("file error 2");
+        else if(file_in==NULL)printf("file error");
+        else while(fgets(inbuf,100,file_in)!=NULL){
+            size_t inbytesleft=strlen(inbuf)+1;
+            size_t outbytesleft=sizeof(char[100]);
+            outbuf=outbuf2;
+            iconv(cd,&inbuf,&inbytesleft,&outbuf,&outbytesleft);
+            fprintf(file_ou,"%s",outbuf2);
+            inbuf=inbuf2;
+        }
+        fclose(file_in);
+        fclose(file_ou);
+    }
+
+    iconv_close(cd);
 
     return 0;
 }
